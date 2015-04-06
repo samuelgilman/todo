@@ -50,6 +50,7 @@ $(document).ready(function () {
   // Templates 
   //
   
+  App.Templates.Invalid = $('#t-invalid').text();
   App.Templates.Lists = $('#t-lists').text();
   App.Templates.ListPreview = $('#t-list-preview').text();
   App.Templates.ItemPreview= $('#t-item-preview').text();
@@ -101,6 +102,17 @@ $(document).ready(function () {
   //
   // Views 
   //
+
+  App.Views.Invalid = Backbone.View.extend({
+    className: 'invalid',
+    template: _.template(App.Templates.Invalid),
+    render: function () {
+      var _this = this;
+      var html = _this.template();
+      _this.$el.html(html);
+      return _this;
+    },
+  });
 
   App.Views.Lists = Backbone.View.extend({
     className: 'lists',
@@ -404,11 +416,17 @@ $(document).ready(function () {
     routes: {
       '' : 'root',
       'create' : 'create',
-      'lists/:uuid': 'lists'
+      'lists/:uuid': 'lists',
+      '*invalid':  'invalid'
     },
     initialize: function () {
       var _this = this;
       _this.$el = $('#container');
+    },
+    invalid: function () {
+      var _this = this;
+      var view = new App.Views.Invalid();
+      _.render({ view: view, $el: _this.$el });
     },
     root: function () {
       var _this = this;
@@ -431,7 +449,7 @@ $(document).ready(function () {
       var _this = this;
       var model = new App.Models.List({ uuid: uuid });
       model.fetch({
-        error: function () { console.log(false); },
+        error: function () { _this.invalid(); },
         success: function () { 
           var view = new App.Views.List({ model: model });
           _.render({ view: view, $el: _this.$el });
