@@ -1,4 +1,4 @@
-window.App = {}; 
+window.App = {};
 
 $(document).ready(function () {
 
@@ -144,7 +144,15 @@ $(document).ready(function () {
     template: _.template(App.Templates.ListPreview),
     initialize: function (params) {
       var _this = this;
-      _this.collection = params.collection;
+      var collection = params.collection;
+      if (collection) {
+        _this.collection = collection;
+        _this.collection.bind('change', function () {
+          var items = _this.collection.toJSON();
+          _this.model.set('items', items);
+          _this.model.save();
+        });
+      }
       _this.model.on('change', function () {
         _this.render();
         _this.run();
@@ -211,7 +219,7 @@ $(document).ready(function () {
     initialize: function () {
       var _this = this;
       var items = _this.model.get('items');
-      _this.submit = _.throttle(_this._submit, 1000);
+      _this.submit = _.throttle(_this._submit, 500);
       _this.collection = new App.Collections.Item(items); 
       _this.model.on('change', function () {
         _this.submit();
@@ -339,23 +347,19 @@ $(document).ready(function () {
     },
     changePosition: function () {
       var _this = this;
-      var before = [];
-      var after = [];
+      var adjust = 0;
+      var models = [];
       var attr = 'position';
       var val = _this.$('select.item-position').val();
       val = Number(val);
-      _this.collection.forEach(function (model, i) {
-        if (model !== _this.model) {
-          i >= val ? after.push(model) : before.push(model);
-        }
-      });
-      before.forEach(function (model, i) {
-        model.set(attr, i);
-      });
-      after.forEach(function (model, i) {
-        model.set(attr, (val+1+i));
-      });
       _this.model.set(attr, val);
+      _this.collection.forEach(function (model, i) {
+        if (model !== _this.model) { models.push(model); }
+      });
+      models.forEach(function (model, i) {
+        if (i === val) { adjust += 1; }
+        model.set(attr, i+adjust);
+      });
       _this.collection.sort();
       _this.collection.trigger('render');
     },
