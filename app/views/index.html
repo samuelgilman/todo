@@ -6,9 +6,70 @@
     <link rel="stylesheet" href="public/css/base.css">
   </head>
   <body>
+    <section class="content container">
+      <noscript>Javascript needs to be enabled.</noscript>
+      <h1><a class="gray" href="/">Lists</a></h1>
+      <p><a href="/#create">New</a></p>
+      <div id="container"></div>
+    </section>
+
+    <script type="t" id="t-lists"></script>
+
+    <script type="t" id="t-list-preview">
+      <hr class="hr">
+      <h2 class="h3">
+        <a class="gray" href="/#lists/{{= uuid }}">{{= title }}</a>
+      </h2>
+      <p>{{= description }}</p>
+      <p>
+        Created: {{= _.toLocaleString(created) }}
+        | Updated: {{= _.toLocaleString(updated) }}
+      </p>
+    </script>
+
+    <script type="t" id="t-list">
+      <div class="container-list-preview"></div>
+      <h2 class="h3">
+        <input type="text" 
+          placeholder="List Title" 
+          class="input list-title" value="{{= title }}"/>
+      </h2>
+      <textarea placeholder="List description." 
+        class="input list-description">{{= description }}</textarea>
+      <p><a href="#" class="delete-list">Delete</a></p>
+      <div class="container-items"></div>
+      <p><a class="add-item" href="#">Add</a></p>
+      <button class="submit">Save</button>
+    </script>
+
+    <script type="t" id="t-item-preview">
+      <h2 class="h4">
+        <input type="checkbox" 
+          id="{{= 'item-' + this.cid }}" 
+          class="item-checkbox" {{= _.checked(checked) }}/>
+        <label for="{{= 'item-' + this.cid }}">{{= title }}</label>
+      </h2>
+      <p>{{= description }}</p>
+    </script>
+
+    <script type="t" id="t-item">
+      <hr class="hr">
+      <p><select class="item-position"></select></p>
+      <p><a href="#" class="right delete-item">x</a></p>
+      <div class="container-item-preview"></div>
+      <h2 class="h3">
+        <input type="text"
+          placeholder="Item Title"
+          class="input item-title"
+          value="{{= title }}"/>
+      </h2>
+      <textarea placeholder="Item description." 
+        class="input item-description">{{= description }}</textarea>
+    </script>
+
     <script src="/public/scripts/lib/underscore-1.7.0.js"></script>
     <script src="/public/scripts/lib/jquery-2.1.1.js"></script>
     <script src="/public/scripts/lib/backbone-1.1.2.js"></script>
-    <script src="/public/scripts/app-v1.js"></script>
+    <script src="/public/scripts/app.js"></script>
   </body>
 </html>
